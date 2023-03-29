@@ -129,7 +129,7 @@ namespace SunCalc {
             double sunrise = noon - hours;
             double sunset = noon + hours;
             double daylength = hours * 2;
-            Console.WriteLine("Results:\nSunrise:\t" + Math.Floor(sunrise) + " "
+            Console.WriteLine("\nResults:\nSunrise:\t" + Math.Floor(sunrise) + " "
                               + Math.Floor((sunrise % 1) * 60) + "\nSunset:\t\t"
                               + Math.Floor(sunset) + " " + Math.Floor((sunset % 1) * 60) + "\nDay length:\t"
                               + Math.Floor(daylength) + " " + Math.Floor((daylength % 1) * 60));
