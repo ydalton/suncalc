@@ -133,6 +133,7 @@ namespace SunCalc {
                               + Math.Floor((sunrise % 1) * 60) + "\nSunset:\t\t"
                               + Math.Floor(sunset) + " " + Math.Floor((sunset % 1) * 60) + "\nDay length:\t"
                               + Math.Floor(daylength) + " " + Math.Floor((daylength % 1) * 60));
+            Console.ReadKey();
         }
     }
 }
