@@ -6,7 +6,7 @@
  * resemble C code in some ways.
  */
 
-namespace BesselCli {
+namespace SunCalc {
     class Program {
         // program info
         const string programName = "suncalc";
@@ -16,14 +16,14 @@ namespace BesselCli {
         const double obliquity = 23.44;
         const double yearLength = 365.242;
         // get declension of the sun
+        // !not a problem
         public static double GetDeclension(int day) {
-            return obliquity * Math.Sin(2 * Math.PI * (day/yearLength) - 1.4);
+            return obliquity * Math.Sin(2 * Math.PI * ((double) day/yearLength) - 1.4);
         }
 
         // get time of sunset
         public static double GetHours(double lat, double decl) {
-            double hours = Math.Acos(-Math.Tan(lat) * Math.Tan(decl));
-            return hours;
+            return Math.Acos(-Math.Tan(lat) * Math.Tan(decl));
         }
         // get offset in hours from "real noon" and local noon.
         public static double GetOffset(double day) {
@@ -53,31 +53,43 @@ namespace BesselCli {
                         Usage();
                         Environment.Exit(0);
                         break;
+                    default:
+                        Console.WriteLine("Unknown option '" + args[i] + "'.");
+                        Environment.Exit(0);
+                        break;
                 }
             }
             const string invalid = "Please enter a valid number.";
+            // query the latitude
             double latitude;
             Console.WriteLine("Latitude: ");
             while(!Double.TryParse(Console.ReadLine(), out latitude)) {
                 Console.WriteLine(invalid);
             }
+
+            // query the year
             int year;
             Console.WriteLine("Year: ");
             while(!Int32.TryParse(Console.ReadLine(), out year)) {
                 Console.WriteLine(invalid);
             }
+
+            // query the month
             byte month;
             Console.WriteLine("Month: ");
             while(!Byte.TryParse(Console.ReadLine(), out month)
                   || month > 12 || month < 1) {
                 Console.WriteLine(invalid);
             }
+
+            // query the day
             byte day;
             Console.WriteLine("Day: ");
             while(!Byte.TryParse(Console.ReadLine(), out day)
                   || day > 31 || day < 1) {
                 Console.WriteLine(invalid);
             }
+
             byte monthLength = 0;
             // turn days of the month into days of the year
             for(int i = 0; i < month-1; i++) {
@@ -108,14 +120,19 @@ namespace BesselCli {
                 }
                 day += monthLength;
             }
-            double declension = GetDeclension(day);
+            latitude *= (Math.PI / 180.0);
+            double declension = (Math.PI / 180.0) * GetDeclension(day);
+            double hours = (12.0/Math.PI) * GetHours(latitude, declension);
+
             double offset = GetOffset(day);
-            double hours = (12.0/Math.PI) * GetHours((Math.PI / 180.0) * latitude,
-                                                     declension * (Math.PI / 180.0));
             double noon = 12 + offset;
             double sunrise = noon - hours;
             double sunset = noon + hours;
-            Console.WriteLine("Results:\nSunrise: " + sunrise + "\nSunset: " + sunset);
+            double daylength = hours * 2;
+            Console.WriteLine("Results:\nSunrise:\t" + Math.Floor(sunrise) + " "
+                              + Math.Floor((sunrise % 1) * 60) + "\nSunset:\t\t"
+                              + Math.Floor(sunset) + " " + Math.Floor((sunset % 1) * 60) + "\nDay length:\t"
+                              + Math.Floor(daylength) + " " + Math.Floor((daylength % 1) * 60));
         }
     }
 }
