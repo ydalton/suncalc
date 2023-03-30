@@ -1,4 +1,6 @@
 ﻿/*
+ * Copyright (c) 2023 ydalton
+ *
  * suncalc: a simple sunset/sunrise calculator for the command line
  *
  * This is the first .NET application I've written in a long time.
