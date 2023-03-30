@@ -4,6 +4,10 @@
  * This is the first .NET application I've written in a long time.
  * I have a lot more experience in writing C code, so this might
  * resemble C code in some ways.
+ *
+ * This program does not take into account the size of the solar
+ * disk, as well as longitude, and atmospheric refraction, so take
+ * the results of this program with a grain of salt.
  */
 
 namespace SunCalc {
@@ -16,7 +20,6 @@ namespace SunCalc {
         const double obliquity = 23.44;
         const double yearLength = 365.242;
         // get declension of the sun
-        // !not a problem
         public static double GetDeclension(int day) {
             return obliquity * Math.Sin(2 * Math.PI * ((double) day/yearLength) - 1.4);
         }
@@ -34,13 +37,16 @@ namespace SunCalc {
             // offset in hours
             return offset / 60.0;
         }
+        // print usage
         static void Usage() {
             Console.WriteLine("usage: " + programName + " [-v | --version] [-h | --help]");
         }
+        // print version
         static void Version() {
             Console.WriteLine(programName + " " + version);
         }
         static void Main(String[] args) {
+            // parse command line arguments.
             for(int i = 0; i < args.Length; i++) {
                 switch(args[i]) {
                     case "-v":
@@ -121,18 +127,29 @@ namespace SunCalc {
                 day += monthLength;
             }
             latitude *= (Math.PI / 180.0);
+            // convert the value obtained from GetDeclension in degrees.
             double declension = (Math.PI / 180.0) * GetDeclension(day);
             double hours = (12.0/Math.PI) * GetHours(latitude, declension);
 
             double offset = GetOffset(day);
+            // adjust time of local noon using
             double noon = 12 + offset;
+            // sunrise time
             double sunrise = noon - hours;
+            // sunset time
             double sunset = noon + hours;
+            // length of the day
             double daylength = hours * 2;
-            Console.WriteLine("\nResults:\nSunrise:\t" + Math.Floor(sunrise) + " "
-                              + Math.Floor((sunrise % 1) * 60) + "\nSunset:\t\t"
-                              + Math.Floor(sunset) + " " + Math.Floor((sunset % 1) * 60) + "\nDay length:\t"
+            // print the results
+            Console.WriteLine("\nResults:\nSunrise:\t"
+                              + Math.Floor(sunrise) + " " + Math.Floor((sunrise % 1) * 60)
+                              + "\nNoon:\t\t"
+                              + Math.Floor(noon) + " " + Math.Floor((noon % 1) * 60)
+                              + "\nSunset:\t\t"
+                              + Math.Floor(sunset) + " " + Math.Floor((sunset % 1) * 60)
+                              + "\nDay length:\t"
                               + Math.Floor(daylength) + " " + Math.Floor((daylength % 1) * 60));
+            // press any key to continue
             Console.ReadKey();
         }
     }
